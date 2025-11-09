@@ -1,0 +1,59 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id    Int   @id @default(autoincrement())
+  email   String  @unique
+  maps    Map[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Map {
+  id            Int       @id @default(autoincrement())
+  title         String?
+  description   String?
+  imageUrl      String    // path or URL of stored image
+  previewUrl    String?   // optional thumbnail/preview
+  width         Int       // original pixel width
+  height        Int       // original pixel height
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  userId        Int?
+  user          User?     @relation(fields: [userId], references: [id])
+
+  annotations   Annotation[]
+}
+
+enum AnnotationType{
+  MARKER
+  TEXT
+  SYMBOL
+}
+
+model Annotation{
+  id              Int               @id @default(autoincrement())
+  type            AnnotationType
+  label           String?
+  icon            String?
+  color           String?
+  xPercent        Float
+  yPercent        Float
+  rotationDeg     Float?
+  scale           Float?
+  metadata        Json?
+
+  mapId           Int
+  map             Map             @relation(fields: [mapId], references:  [id], onDelete: Cascade)
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}

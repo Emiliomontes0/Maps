@@ -1,0 +1,6 @@
+node_modules
+# Keep environment variables out of version control
+.env
+.cursorignore
+/node_modules
+/generated/prisma
